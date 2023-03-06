@@ -9,13 +9,14 @@
 
 (
 echo "** START BOOTSTRAP SCRIPT"
+echo "  This script may need some interaction so tune configurations."
 # Display shell commands
 set -x
 sudo apt update -y
 sudo apt upgrade -y
 sudo apt autoremove
 
-# utilisataries
+# utilitaries
 sudo apt install curl wget git bat zip jq ncdu htop nmap build-essential zsh \
 libffi-dev libncurses5-dev zlib1g zlib1g-dev libssl-dev \
 libreadline-dev libbz2-dev libsqlite3-dev
@@ -35,8 +36,6 @@ git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$
 
 # asdf
 git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
-# execute asdf temporarily
-. $HOME/.asdf/asdf.sh
 
 # asdf - install terraform
 asdf plugin-add terraform https://github.com/asdf-community/asdf-hashicorp.git
