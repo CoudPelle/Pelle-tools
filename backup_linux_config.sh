@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ######################################
 ###### Script for wsl - ubuntu #######
@@ -10,11 +10,15 @@
 echo "** START BACKUP SCRIPT"
 
 cd /mnt/c
-export username=$(cmd.exe /C "echo %USERNAME%")
-export domain=$(cmd.exe /C "echo %USERDOMAIN%")
+# Remove windows command carriage return with sed
+windows_user="$(cmd.exe /C "echo %USERNAME%" | sed 's/\r$//' )"
+domain="$(cmd.exe /C "echo %USERDOMAIN%"| sed 's/\r$//' )"
 cd - > /dev/null
 
-export WIN_MNT_PATH="/mnt/c/Users/$username"
+# echo $windows_user
+# echo $domain
+WIN_MNT_PATH="/mnt/c/Users/$windows_user"
+
 # test if tar exists
 if ! command -v tar &> /dev/null;
 then
@@ -24,13 +28,21 @@ fi
 
 echo "Using windows user dir = $WIN_MNT_PATH"
 # files to backup
-files2back=("$HOME/.gitconfig"
+declare -a files2backup
+
+files2backup=( "$WIN_MNT_PATH/AppData/Local/Packages/Microsoft.WindowsTerminal_*/LocalState/settings.json"
+            "$HOME/.gitconfig"
             "$HOME/.zshrc"
             "$HOME/.ssh/config"
-            "$WIN_MNT_PATH/AppData/Local/Packages/Microsoft.WindowsTerminal_*/LocalState/settings.json"
-            "$HOME/.zsh_history")
+            "$HOME/.zsh_history" )
 
-echo "${files2back[@]}"
-for file in "${files2back[@]}"; do
-    echo $file
+for file in "${files2backup[@]}"; do
+    if [ ! -f $file ]; then
+        echo "$file not found on disk."
+        exit 1
+    fi
 done
+
+tar czvf "${domain}_${windows_user}_config_backup.tar.gz" ${files2backup[@]}
+
+echo "** BACKUP FINISHED"
