@@ -43,6 +43,8 @@ for file in "${files2backup[@]}"; do
     fi
 done
 
-tar czvf "${domain}_${windows_user}_config_backup.tar.gz" ${files2backup[@]}
+backup_filename="${domain}_${windows_user}_config_backup_$(date -u +%Y_%m_%d).tar.gz"
+echo "=> Saving backup as $backup_filename"
+tar czvf "$backup_filename" ${files2backup[@]} 2> /dev/null
 
 echo "** BACKUP FINISHED"
